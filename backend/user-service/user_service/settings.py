@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "rest_framework",           # enables building REST APIs
     "rest_framework_simplejwt", # provides JWT token based authentication
     "accounts",                 # our custom app — handles users, login, roles
+    "rest_framework_simplejwt.token_blacklist", # blacklists invalid tokens when user logout
+
 ]
 
 MIDDLEWARE = [

@@ -21,9 +21,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             role=validated_data.get('role', 'staff'),
             phone=validated_data.get('phone', ''),
         )
+        # returns the full details of the user as python object
         return user
 
 # Handles outgoing user data in API responses — password excluded for security
+#convert user object ro json for response
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
