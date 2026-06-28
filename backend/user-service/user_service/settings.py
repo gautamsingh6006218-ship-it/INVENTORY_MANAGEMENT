@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+# reads values from .env file — keeps sensitive data out of source code
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,9 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "accounts",
+    "rest_framework",           # enables building REST APIs
+    "rest_framework_simplejwt", # provides JWT token based authentication
+    "accounts",                 # our custom app — handles users, login, roles
 ]
 
 MIDDLEWARE = [
@@ -76,14 +77,15 @@ WSGI_APPLICATION = "user_service.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# all credentials loaded from .env — never hardcoded for security
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config('DB_NAME'),
-        "USER": config('DB_USER'),
-        "PASSWORD": config('DB_PASSWORD'),
-        "HOST": config('DB_HOST'),
-        "PORT": config('DB_PORT'),
+        "ENGINE": "django.db.backends.postgresql", # switched from sqlite3 to PostgreSQL
+        "NAME": config('DB_NAME'),       # database name created for this microservice
+        "USER": config('DB_USER'),       # PostgreSQL user with access to this database
+        "PASSWORD": config('DB_PASSWORD'), # password for the PostgreSQL user
+        "HOST": config('DB_HOST'),       # database running locally during development
+        "PORT": config('DB_PORT'),       # default PostgreSQL port
     }
 }
 
@@ -127,6 +129,7 @@ STATIC_URL = "static/"
 
 from datetime import timedelta
 
+# all API requests will be authenticated using JWT tokens by default
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -134,8 +137,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # short lived for security
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),     # used to get new access token without re-login
 }
 
+# tells Django to use our custom User model instead of its default one
 AUTH_USER_MODEL = 'accounts.User'
