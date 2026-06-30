@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,14 +119,24 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# reads host from env — localhost for local dev, Docker service name in Docker
+PRODUCT_HOST   = os.environ.get('PRODUCT_HOST',   'http://127.0.0.1:8000')
+INVENTORY_HOST = os.environ.get('INVENTORY_HOST', 'http://127.0.0.1:8001')
+ORDER_HOST     = os.environ.get('ORDER_HOST',     'http://127.0.0.1:8002')
+USER_HOST      = os.environ.get('USER_HOST',      'http://127.0.0.1:8003')
+SUPPLIER_HOST  = os.environ.get('SUPPLIER_HOST',  'http://127.0.0.1:8004')
+DISCOUNT_HOST  = os.environ.get('DISCOUNT_HOST',  'http://127.0.0.1:8005')
+REPORT_HOST    = os.environ.get('REPORT_HOST',    'http://127.0.0.1:8006')
+NOTIFICATION_HOST = os.environ.get('NOTIFICATION_HOST', 'http://127.0.0.1:8007')
+
 # (base_url, api_prefix) — prefix is what each service uses in its own urls.py
 SERVICE_URLS = {
-    'products':      ('http://127.0.0.1:8000', 'products'),
-    'inventory':     ('http://127.0.0.1:8001', 'inventory'),
-    'orders':        ('http://127.0.0.1:8002', 'orders'),
-    'users':         ('http://127.0.0.1:8003', 'users'),
-    'suppliers':     ('http://127.0.0.1:8004', 'suppliers'),
-    'discounts':     ('http://127.0.0.1:8005', 'discounts'),
-    'reports':       ('http://127.0.0.1:8006', 'reports'),
-    'notifications': ('http://127.0.0.1:8007', 'notifications'),
+    'products':      (PRODUCT_HOST,      'products'),
+    'inventory':     (INVENTORY_HOST,    'inventory'),
+    'orders':        (ORDER_HOST,        'orders'),
+    'users':         (USER_HOST,         'users'),
+    'suppliers':     (SUPPLIER_HOST,     'suppliers'),
+    'discounts':     (DISCOUNT_HOST,     'discounts'),
+    'reports':       (REPORT_HOST,       'reports'),
+    'notifications': (NOTIFICATION_HOST, 'notifications'),
 }

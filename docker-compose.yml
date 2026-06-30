@@ -1,0 +1,224 @@
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: user_service_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # runs init-db.sql on first start to create all 8 databases
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+
+  # ── Zookeeper (required by Kafka) ──────────────────────────────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  # ── Kafka ──────────────────────────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # PLAINTEXT — internal Docker network communication between services
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # ── User Service (port 8003) ────────────────────────────────────────────────
+  user-service:
+    build: ./backend/user-service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: user_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-user-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+    restart: on-failure
+
+  # ── Product Service (port 8000) ─────────────────────────────────────────────
+  product-service:
+    build: ./backend/product-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: product_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-product-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+    restart: on-failure
+
+  # ── Inventory Service (port 8001) ───────────────────────────────────────────
+  inventory-service:
+    build: ./backend/inventory-service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      DB_NAME: inventory_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-inventory-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      KAFKA_BROKER: kafka:9092
+    restart: on-failure
+
+  # ── Order Service (port 8002) ────────────────────────────────────────────────
+  order-service:
+    build: ./backend/order-service
+    ports:
+      - "8002:8002"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      DB_NAME: order_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-order-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      KAFKA_BROKER: kafka:9092
+    restart: on-failure
+
+  # ── Supplier Service (port 8004) ─────────────────────────────────────────────
+  supplier-service:
+    build: ./backend/supplier-service
+    ports:
+      - "8004:8004"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: supplier_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-supplier-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+    restart: on-failure
+
+  # ── Discount Service (port 8005) ─────────────────────────────────────────────
+  discount-service:
+    build: ./backend/discount-service
+    ports:
+      - "8005:8005"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: discount_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      # discount-service uses DJANGO_SECRET_KEY not SECRET_KEY
+      DJANGO_SECRET_KEY: discount-service-django-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+    restart: on-failure
+
+  # ── Report Service (port 8006) ───────────────────────────────────────────────
+  report-service:
+    build: ./backend/report-service
+    ports:
+      - "8006:8006"
+    depends_on:
+      - postgres
+    environment:
+      DB_NAME: report_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-report-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+    restart: on-failure
+
+  # ── Notification Service (port 8007) ─────────────────────────────────────────
+  notification-service:
+    build: ./backend/notification-service
+    ports:
+      - "8007:8007"
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      DB_NAME: notification_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-notification-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      KAFKA_BROKER: kafka:9092
+    restart: on-failure
+
+  # ── Notification Consumer (Kafka listener — no HTTP port) ────────────────────
+  notification-consumer:
+    build: ./backend/notification-service
+    # overrides the Dockerfile CMD — runs consumer script instead of runserver
+    command: python notifications/consumer.py
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      DB_NAME: notification_service_db
+      DB_USER: inventory_user
+      DB_PASSWORD: "123456"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-notification-service-secret-key-2026
+      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      KAFKA_BROKER: kafka:9092
+    restart: on-failure
+
+  # ── API Gateway (port 8008) ───────────────────────────────────────────────────
+  api-gateway:
+    build: ./backend/api-gateway
+    ports:
+      - "8008:8008"
+    depends_on:
+      - user-service
+      - product-service
+      - inventory-service
+      - order-service
+      - supplier-service
+      - discount-service
+      - report-service
+      - notification-service
+    environment:
+      # Docker service names replace localhost for inter-service communication
+      PRODUCT_HOST: http://product-service:8000
+      INVENTORY_HOST: http://inventory-service:8001
+      ORDER_HOST: http://order-service:8002
+      USER_HOST: http://user-service:8003
+      SUPPLIER_HOST: http://supplier-service:8004
+      DISCOUNT_HOST: http://discount-service:8005
+      REPORT_HOST: http://report-service:8006
+      NOTIFICATION_HOST: http://notification-service:8007
+    restart: on-failure
+
+volumes:
+  postgres_data:

@@ -7,11 +7,14 @@ from kafka import KafkaProducer
 from decouple import config
 import json
 
-# reads KAFKA_BROKER from .env — defaults to localhost:9092 for local dev, kafka:9092 in Docker
-producer = KafkaProducer(
-    bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
+# producer created at startup — try/except so Django can start even if Kafka isn't ready yet
+try:
+    producer = KafkaProducer(
+        bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    )
+except Exception:
+    producer = None
 
 @api_view(['GET', 'POST'])
 def order_list(request):
@@ -27,16 +30,17 @@ def order_list(request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()  # saves new order to DB
-            try:
-                # publish event to Kafka — notification-service will consume this
-                producer.send('order.created', {
-                    'order_id': serializer.data['id'],
-                    'customer_id': serializer.data['customer_id'],
-                    'message': f"Order {serializer.data['id']} has been placed"
-                })
-            except Exception:
-                # if Kafka is down, order is still saved — notification just won't be sent
-                pass
+            if producer:
+                try:
+                    # publish event to Kafka — notification-service will consume this
+                    producer.send('order.created', {
+                        'order_id': serializer.data['id'],
+                        'customer_id': serializer.data['customer_id'],
+                        'message': f"Order {serializer.data['id']} has been placed"
+                    })
+                except Exception:
+                    # if Kafka is down, order is still saved — notification just won't be sent
+                    pass
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

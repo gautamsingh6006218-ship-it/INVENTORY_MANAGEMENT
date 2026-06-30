@@ -7,11 +7,14 @@ from kafka import KafkaProducer
 from decouple import config
 import json
 
-# reads KAFKA_BROKER from .env — defaults to localhost:9092 for local dev, kafka:9092 in Docker
-producer = KafkaProducer(
-    bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
-)
+# producer created at startup — try/except so Django can start even if Kafka isn't ready yet
+try:
+    producer = KafkaProducer(
+        bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    )
+except Exception:
+    producer = None
 
 
 # handles listing all stock entries and creating a new one
@@ -74,17 +77,18 @@ def add_stock(request, pk):
     stock.quantity += int(quantity_to_add)  # add to existing quantity
     stock.save()  # last_updated auto updates on save
 
-    try:
-        # notify other services that stock was replenished
-        producer.send('stock.added', {
-            'product_id': stock.product_id,
-            'quantity_added': int(quantity_to_add),
-            'new_quantity': stock.quantity,
-            'message': f"Stock added for product {stock.product_id}: +{quantity_to_add} units"
-        })
-    except Exception:
-        # if Kafka is down, stock is still saved — event just won't be sent
-        pass
+    if producer:
+        try:
+            # notify other services that stock was replenished
+            producer.send('stock.added', {
+                'product_id': stock.product_id,
+                'quantity_added': int(quantity_to_add),
+                'new_quantity': stock.quantity,
+                'message': f"Stock added for product {stock.product_id}: +{quantity_to_add} units"
+            })
+        except Exception:
+            # if Kafka is down, stock is still saved — event just won't be sent
+            pass
 
     return Response({'message': 'Stock updated', 'new_quantity': stock.quantity})
 
@@ -106,7 +110,7 @@ def reduce_stock(request, pk):
     stock.save()  # last_updated auto updates on save
 
     # check if quantity has dropped to or below the reorder threshold
-    if stock.quantity <= stock.reorder_level:
+    if producer and stock.quantity <= stock.reorder_level:
         try:
             # alert other services that this product needs restocking
             producer.send('stock.low', {
