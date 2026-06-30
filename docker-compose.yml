@@ -4,8 +4,8 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: inventory_user
-      POSTGRES_PASSWORD: "123456"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: user_service_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -41,12 +41,12 @@ services:
       - postgres
     environment:
       DB_NAME: user_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-user-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${USER_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: on-failure
 
   # ── Product Service (port 8000) ─────────────────────────────────────────────
@@ -58,12 +58,12 @@ services:
       - postgres
     environment:
       DB_NAME: product_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-product-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${PRODUCT_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: on-failure
 
   # ── Inventory Service (port 8001) ───────────────────────────────────────────
@@ -76,12 +76,12 @@ services:
       - kafka
     environment:
       DB_NAME: inventory_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-inventory-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${INVENTORY_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
     restart: on-failure
 
@@ -95,12 +95,12 @@ services:
       - kafka
     environment:
       DB_NAME: order_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-order-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${ORDER_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
     restart: on-failure
 
@@ -113,12 +113,12 @@ services:
       - postgres
     environment:
       DB_NAME: supplier_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-supplier-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${SUPPLIER_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: on-failure
 
   # ── Discount Service (port 8005) ─────────────────────────────────────────────
@@ -130,13 +130,13 @@ services:
       - postgres
     environment:
       DB_NAME: discount_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
       # discount-service uses DJANGO_SECRET_KEY not SECRET_KEY
-      DJANGO_SECRET_KEY: discount-service-django-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      DJANGO_SECRET_KEY: ${DISCOUNT_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: on-failure
 
   # ── Report Service (port 8006) ───────────────────────────────────────────────
@@ -148,12 +148,12 @@ services:
       - postgres
     environment:
       DB_NAME: report_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-report-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${REPORT_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: on-failure
 
   # ── Notification Service (port 8007) ─────────────────────────────────────────
@@ -166,12 +166,12 @@ services:
       - kafka
     environment:
       DB_NAME: notification_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-notification-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${NOTIFICATION_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
     restart: on-failure
 
@@ -185,12 +185,12 @@ services:
       - kafka
     environment:
       DB_NAME: notification_service_db
-      DB_USER: inventory_user
-      DB_PASSWORD: "123456"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOST: postgres
       DB_PORT: 5432
-      SECRET_KEY: django-insecure-notification-service-secret-key-2026
-      JWT_SECRET_KEY: inventory-management-jwt-shared-secret-2026
+      SECRET_KEY: ${NOTIFICATION_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
     restart: on-failure
 
