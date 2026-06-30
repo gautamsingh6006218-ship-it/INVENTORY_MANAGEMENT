@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from orders.models import Order
@@ -7,7 +6,7 @@ from orders.serializers import OrderSerializer
 
 # Create your views here.
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def order_list(request):
     if request.method == 'GET':
         # fetch all orders from DB
@@ -26,7 +25,7 @@ def order_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def order_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/orders/1/ → pk=1
@@ -54,7 +53,7 @@ def order_detail(request, pk):
 
 
 @api_view(['PATCH'])
-@permission_classes([AllowAny])
+
 def update_status(request, pk):
     try:
         order = Order.objects.get(pk=pk)

@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from notifications.models import Notification
@@ -7,7 +6,7 @@ from notifications.serializers import NotificationSerializer
 
 # handles GET all notifications and POST create new notification
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def notification_list(request):
     if request.method == 'GET':
         # fetch all notifications from DB
@@ -29,7 +28,7 @@ def notification_list(request):
 
 # handles GET single notification and DELETE by ID
 @api_view(['GET', 'DELETE'])
-@permission_classes([AllowAny])
+
 def notification_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/notifications/1/ → pk=1
@@ -51,7 +50,7 @@ def notification_detail(request, pk):
 
 # handles PATCH to mark a notification as read or unread
 @api_view(['PATCH'])
-@permission_classes([AllowAny])
+
 def mark_read(request, pk):
     try:
         notification = Notification.objects.get(pk=pk)

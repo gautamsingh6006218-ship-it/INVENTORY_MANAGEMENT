@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from suppliers.models import Supplier
@@ -8,7 +7,7 @@ from suppliers.serializers import SupplierSerializer
 # Create your views here.
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def supplier_list(request):
     if request.method == 'GET':
         # fetch all suppliers from DB
@@ -27,7 +26,7 @@ def supplier_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def supplier_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/suppliers/1/ → pk=1
@@ -55,7 +54,7 @@ def supplier_detail(request, pk):
 
 
 @api_view(['PATCH'])
-@permission_classes([AllowAny])
+
 def toggle_active(request, pk):
     try:
         supplier = Supplier.objects.get(pk=pk)

@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from discounts.models import Discount
@@ -8,7 +7,7 @@ from discounts.serializers import DiscountSerializer
 # Create your views here.
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def discount_list(request):
     if request.method == 'GET':
         # fetch all discounts from DB
@@ -26,7 +25,7 @@ def discount_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def discount_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/discounts/1/ → pk=1
@@ -54,7 +53,7 @@ def discount_detail(request, pk):
 
 
 @api_view(['PATCH'])
-@permission_classes([AllowAny])
+
 def toggle_active(request, pk):
     try:
         discount = Discount.objects.get(pk=pk)

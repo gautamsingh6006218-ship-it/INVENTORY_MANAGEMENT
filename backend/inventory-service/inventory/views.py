@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from inventory.models import Stock
@@ -8,7 +7,6 @@ from inventory.serializers import StockSerializer
 
 # handles listing all stock entries and creating a new one
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
 def inventory_list(request):
     if request.method == 'GET':
         # fetch all stock records from DB
@@ -28,7 +26,7 @@ def inventory_list(request):
 
 # handles GET, PUT, DELETE for a single stock entry by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def inventory_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/inventory/1/ → pk=1
@@ -57,7 +55,7 @@ def inventory_detail(request, pk):
 
 # increases stock quantity — called when new stock arrives in warehouse
 @api_view(['PUT'])
-@permission_classes([AllowAny])
+
 def add_stock(request, pk):
     try:
         stock = Stock.objects.get(pk=pk)
@@ -73,7 +71,7 @@ def add_stock(request, pk):
 
 # decreases stock quantity — called when an order is placed
 @api_view(['PUT'])
-@permission_classes([AllowAny])
+
 def reduce_stock(request, pk):
     try:
         stock = Stock.objects.get(pk=pk)

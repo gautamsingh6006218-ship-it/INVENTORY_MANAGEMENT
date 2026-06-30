@@ -1,5 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from reports.models import Report
@@ -8,7 +7,7 @@ from reports.serializers import ReportSerializer
 # Create your views here.
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def report_list(request):
     if request.method == 'GET':
         # fetch all reports from DB
@@ -26,7 +25,7 @@ def report_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'DELETE'])
-@permission_classes([AllowAny])
+
 def report_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/reports/1/ → pk=1

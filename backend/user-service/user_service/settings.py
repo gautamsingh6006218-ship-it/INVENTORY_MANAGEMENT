@@ -141,6 +141,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),  # short lived for security
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),     # used to get new access token without re-login
+    "SIGNING_KEY": config('JWT_SECRET_KEY'),         # shared key — all services use this to verify tokens
 }
 
 # tells Django to use our custom User model instead of its default one

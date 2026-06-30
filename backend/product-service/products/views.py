@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from products.models import Category, ElectronicsProduct, FoodProduct, ClothingProduct
@@ -10,7 +9,7 @@ from products.serializers import CategorySerializer, ElectronicsSerializer, Food
 
 # handles both listing and creating categories on same URL
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def category_list(request):
     if request.method == 'GET':
         # fetch all categories from DB
@@ -30,7 +29,7 @@ def category_list(request):
 
 # handles both listing and creating electronics products on same URL
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def electronics_list(request):
     if request.method == 'GET':
         # fetch all electronics products from DB
@@ -54,7 +53,7 @@ def electronics_list(request):
 
 # handles both listing and creating food products on same URL
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def food_list(request):
     if request.method == 'GET':
         # fetch all food products from DB
@@ -79,7 +78,7 @@ def food_list(request):
 
 # handles both listing and creating clothing products on same URL
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+
 def clothing_list(request):
     if request.method == 'GET':
         # fetch all clothing products from DB
@@ -103,7 +102,7 @@ def clothing_list(request):
     
 # handles GET, PUT, DELETE for a single category by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def category_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/products/categories/1/ → pk=1
@@ -132,7 +131,7 @@ def category_detail(request, pk):
 
 # handles GET, PUT, DELETE for a single electronics product by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def electronics_detail(request, pk):
     try:
         # fetch the specific electronics product by primary key
@@ -160,7 +159,7 @@ def electronics_detail(request, pk):
 
 # handles GET, PUT, DELETE for a single food product by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def food_detail(request, pk):
     try:
         # fetch the specific food product by primary key
@@ -189,7 +188,7 @@ def food_detail(request, pk):
 
 # handles GET, PUT, DELETE for a single clothing product by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([AllowAny])
+
 def clothing_detail(request, pk):
     try:
         # fetch the specific clothing product by primary key
