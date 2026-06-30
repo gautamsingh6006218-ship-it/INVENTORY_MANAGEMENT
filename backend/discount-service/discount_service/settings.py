@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "discounts",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -140,3 +142,7 @@ SIMPLE_JWT = {
     # shared signing key — all services must use the same value to verify tokens
     "SIGNING_KEY": config('JWT_SECRET_KEY'),
 }
+# allow React frontend to make requests to this service
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]

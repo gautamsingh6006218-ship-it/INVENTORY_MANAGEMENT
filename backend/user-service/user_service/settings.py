@@ -43,12 +43,13 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt", # provides JWT token based authentication
     "accounts",                 # our custom app — handles users, login, roles
     "rest_framework_simplejwt.token_blacklist", # blacklists invalid tokens when user logout
-
+    "corsheaders",              # allows React frontend to make requests to this service
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # must be before CommonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -146,3 +147,8 @@ SIMPLE_JWT = {
 
 # tells Django to use our custom User model instead of its default one
 AUTH_USER_MODEL = 'accounts.User'
+
+# allow React frontend to make requests to this service
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
