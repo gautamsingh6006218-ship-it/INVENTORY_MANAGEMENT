@@ -13,25 +13,50 @@ django.setup()
 
 from notifications.models import Notification
 
-# connect to Kafka and listen to order.created topic
+# listen to all three topics — order placed, stock added, stock low
 consumer = KafkaConsumer(
-    'order.created',                          # must match the topic producer publishes to
+    'order.created',
+    'stock.added',
+    'stock.low',
     bootstrap_servers='localhost:9092',
     value_deserializer=lambda v: json.loads(v.decode('utf-8'))
 )
 
-print('Consumer started — listening for order events...')
+print('Consumer started — listening for order and stock events...')
 
 # loop forever — processes each message as it arrives
 for message in consumer:
     data = message.value
-    print(f"Received event: {data}")
-    # save notification to DB for the customer who placed the order
-    Notification.objects.create(
-        user_id=data['customer_id'],
-        message=data['message'],
-        notification_type='order',
-        is_read=False
-    )
-    print(f"Notification saved for customer {data['customer_id']}")
-    
+    # message.topic tells us which topic this message came from
+    topic = message.topic
+    print(f"Received [{topic}] event: {data}")
+
+    if topic == 'order.created':
+        # save notification for the customer who placed the order
+        Notification.objects.create(
+            user_id=data['customer_id'],
+            message=data['message'],
+            notification_type='order',
+            is_read=False
+        )
+        print(f"Notification saved for customer {data['customer_id']}")
+
+    elif topic == 'stock.added':
+        # save notification for admin (user_id=1) when new stock arrives
+        Notification.objects.create(
+            user_id=1,
+            message=data['message'],
+            notification_type='stock',
+            is_read=False
+        )
+        print(f"Stock added notification saved for product {data['product_id']}")
+
+    elif topic == 'stock.low':
+        # save urgent notification for admin when quantity drops below reorder_level
+        Notification.objects.create(
+            user_id=1,
+            message=data['message'],
+            notification_type='stock',
+            is_read=False
+        )
+        print(f"Low stock notification saved for product {data['product_id']}")

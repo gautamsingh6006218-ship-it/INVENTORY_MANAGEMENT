@@ -3,6 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from inventory.models import Stock
 from inventory.serializers import StockSerializer
+from kafka import KafkaProducer
+import json
+
+# single producer instance shared across all views — avoids reconnecting on every request
+producer = KafkaProducer(
+    bootstrap_servers='localhost:9092',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
 
 
 # handles listing all stock entries and creating a new one
@@ -26,7 +34,6 @@ def inventory_list(request):
 
 # handles GET, PUT, DELETE for a single stock entry by its ID
 @api_view(['GET', 'PUT', 'DELETE'])
-
 def inventory_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/inventory/1/ → pk=1
@@ -55,7 +62,6 @@ def inventory_detail(request, pk):
 
 # increases stock quantity — called when new stock arrives in warehouse
 @api_view(['PUT'])
-
 def add_stock(request, pk):
     try:
         stock = Stock.objects.get(pk=pk)
@@ -66,12 +72,24 @@ def add_stock(request, pk):
     quantity_to_add = request.data.get('quantity', 0)
     stock.quantity += int(quantity_to_add)  # add to existing quantity
     stock.save()  # last_updated auto updates on save
+
+    try:
+        # notify other services that stock was replenished
+        producer.send('stock.added', {
+            'product_id': stock.product_id,
+            'quantity_added': int(quantity_to_add),
+            'new_quantity': stock.quantity,
+            'message': f"Stock added for product {stock.product_id}: +{quantity_to_add} units"
+        })
+    except Exception:
+        # if Kafka is down, stock is still saved — event just won't be sent
+        pass
+
     return Response({'message': 'Stock updated', 'new_quantity': stock.quantity})
 
 
 # decreases stock quantity — called when an order is placed
 @api_view(['PUT'])
-
 def reduce_stock(request, pk):
     try:
         stock = Stock.objects.get(pk=pk)
@@ -85,4 +103,19 @@ def reduce_stock(request, pk):
 
     stock.quantity -= int(quantity_to_reduce)  # subtract from existing quantity
     stock.save()  # last_updated auto updates on save
+
+    # check if quantity has dropped to or below the reorder threshold
+    if stock.quantity <= stock.reorder_level:
+        try:
+            # alert other services that this product needs restocking
+            producer.send('stock.low', {
+                'product_id': stock.product_id,
+                'current_quantity': stock.quantity,
+                'reorder_level': stock.reorder_level,
+                'message': f"Low stock alert for product {stock.product_id}: only {stock.quantity} units left"
+            })
+        except Exception:
+            # if Kafka is down, stock is still reduced — alert just won't be sent
+            pass
+
     return Response({'message': 'Stock reduced', 'new_quantity': stock.quantity})
