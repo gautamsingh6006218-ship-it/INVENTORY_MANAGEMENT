@@ -9,7 +9,7 @@ class OrderListTests(TestCase):
     def setUp(self):
         # APIClient simulates HTTP requests without running a real server
         self.client = APIClient()
-        self.url = '/api/'
+        self.url = '/api/orders/'
 
     def test_get_all_orders(self):
         # create two orders in test DB
@@ -49,7 +49,7 @@ class OrderDetailTests(TestCase):
             customer_id=1, product_id=1,
             quantity=2, total_price=199.99
         )
-        self.url = f'/api/{self.order.id}/'
+        self.url = f'/api/orders/{self.order.id}/'
 
     def test_get_single_order(self):
         response = self.client.get(self.url)
@@ -58,7 +58,7 @@ class OrderDetailTests(TestCase):
 
     def test_get_order_not_found(self):
         # ID 9999 does not exist — should return 404
-        response = self.client.get('/api/9999/')
+        response = self.client.get('/api/orders/9999/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_order(self):
@@ -88,7 +88,7 @@ class UpdateStatusTests(TestCase):
             customer_id=1, product_id=1,
             quantity=2, total_price=199.99
         )
-        self.url = f'/api/{self.order.id}/status/'
+        self.url = f'/api/orders/{self.order.id}/status/'
 
     def test_update_status_to_shipped(self):
         # order starts as Pending — update to Shipped
@@ -108,5 +108,5 @@ class UpdateStatusTests(TestCase):
 
     def test_update_status_order_not_found(self):
         # ID 9999 does not exist — should return 404
-        response = self.client.patch('/api/9999/status/', {'status': 'Shipped'}, format='json')
+        response = self.client.patch('/api/orders/9999/status/', {'status': 'Shipped'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework_simplejwt",
     "proxy",
 ]
 
@@ -119,14 +118,14 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# URLs of each microservice — gateway forwards requests to these
+# (base_url, api_prefix) — prefix is what each service uses in its own urls.py
 SERVICE_URLS = {
-    'products':      'http://127.0.0.1:8000',
-    'inventory':     'http://127.0.0.1:8001',
-    'orders':        'http://127.0.0.1:8002',
-    'users':         'http://127.0.0.1:8003',
-    'suppliers':     'http://127.0.0.1:8004',
-    'discounts':     'http://127.0.0.1:8005',
-    'reports':       'http://127.0.0.1:8006',
-    'notifications': 'http://127.0.0.1:8007',
+    'products':      ('http://127.0.0.1:8000', 'products'),
+    'inventory':     ('http://127.0.0.1:8001', 'inventory'),
+    'orders':        ('http://127.0.0.1:8002', 'orders'),
+    'users':         ('http://127.0.0.1:8003', 'users'),
+    'suppliers':     ('http://127.0.0.1:8004', 'suppliers'),
+    'discounts':     ('http://127.0.0.1:8005', 'discounts'),
+    'reports':       ('http://127.0.0.1:8006', 'reports'),
+    'notifications': ('http://127.0.0.1:8007', 'notifications'),
 }
