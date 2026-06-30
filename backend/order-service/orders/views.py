@@ -4,13 +4,12 @@ from rest_framework import status
 from orders.models import Order
 from orders.serializers import OrderSerializer
 from kafka import KafkaProducer
+from decouple import config
 import json
 
-
-# Create your views here.
-
+# reads KAFKA_BROKER from .env — defaults to localhost:9092 for local dev, kafka:9092 in Docker
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 

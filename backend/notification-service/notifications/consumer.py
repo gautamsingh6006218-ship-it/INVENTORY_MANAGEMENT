@@ -1,4 +1,5 @@
 from kafka import KafkaConsumer
+from decouple import config
 import json
 import django
 import os
@@ -14,11 +15,12 @@ django.setup()
 from notifications.models import Notification
 
 # listen to all three topics — order placed, stock added, stock low
+# reads KAFKA_BROKER from .env — defaults to localhost:9092 for local dev, kafka:9092 in Docker
 consumer = KafkaConsumer(
     'order.created',
     'stock.added',
     'stock.low',
-    bootstrap_servers='localhost:9092',
+    bootstrap_servers=config('KAFKA_BROKER', default='localhost:9092'),
     value_deserializer=lambda v: json.loads(v.decode('utf-8'))
 )
 
