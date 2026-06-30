@@ -3,10 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from orders.models import Order
 from orders.serializers import OrderSerializer
+from kafka import KafkaProducer
+import json
+
 
 # Create your views here.
-@api_view(['GET', 'POST'])
 
+producer = KafkaProducer(
+    bootstrap_servers='localhost:9092',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+@api_view(['GET', 'POST'])
 def order_list(request):
     if request.method == 'GET':
         # fetch all orders from DB
@@ -20,12 +28,21 @@ def order_list(request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()  # saves new order to DB
+            try:
+                # publish event to Kafka — notification-service will consume this
+                producer.send('order.created', {
+                    'order_id': serializer.data['id'],
+                    'customer_id': serializer.data['customer_id'],
+                    'message': f"Order {serializer.data['id']} has been placed"
+                })
+            except Exception:
+                # if Kafka is down, order is still saved — notification just won't be sent
+                pass
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-
 def order_detail(request, pk):
     try:
         # pk comes from the URL — e.g. /api/orders/1/ → pk=1
@@ -53,7 +70,6 @@ def order_detail(request, pk):
 
 
 @api_view(['PATCH'])
-
 def update_status(request, pk):
     try:
         order = Order.objects.get(pk=pk)
