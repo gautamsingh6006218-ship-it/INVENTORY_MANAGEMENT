@@ -1,33 +1,84 @@
-/* horizontal navbar with logo on left and links in center */
 nav {
     background-color: #16213e;
-    padding: 15px 30px;
+    padding: 0 30px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    height: 68px;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* margin-right: auto pushes title to left and links to right */
-nav h2 {
+/* logo text — far left, never shrinks */
+.nav-brand {
     color: #e94560;
-    margin-right: auto;
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-right: 32px;
+    flex-shrink: 0;
 }
 
-nav a {
-    color: #e0e0e0;
+/* center group — takes all remaining space, links sit left within it */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+/* right group — Profile + Logout pinned to the right */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+/* base link style */
+.nav-link {
+    color: #a0a0b0;
     text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: color 0.15s, background-color 0.15s;
 }
 
-nav a:hover {
+.nav-link:hover {
+    color: #e0e0e0;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* active link — bright text + bottom border to show current page */
+.nav-link--active {
     color: #e94560;
+    background-color: rgba(233, 69, 96, 0.1);
 }
 
-/* logout button */
-nav button {
+.nav-link--active:hover {
+    color: #e94560;
+    background-color: rgba(233, 69, 96, 0.15);
+}
+
+/* logout button — styled differently from nav links */
+.nav-logout {
     background-color: #e94560;
-    color: white;
+    color: #fff;
     border: none;
-    padding: 8px 16px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.nav-logout:hover {
+    background-color: #c73652;
 }

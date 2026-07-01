@@ -1,37 +1,45 @@
 import React from "react";
 import { userAPI } from "../api/axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        try{
+        try {
             const refresh = localStorage.getItem("refresh");
             await userAPI.post("/logout/", { refresh });
-        } catch (error) {
-            
-        }
-        // removes JWT token from localStorage
+        } catch (error) {}
         localStorage.removeItem("token");
         localStorage.removeItem("refresh");
         navigate("/");
     };
 
+    // NavLink's className prop receives { isActive } — returns different class based on current URL
+    const linkClass = ({ isActive }) => isActive ? "nav-link nav-link--active" : "nav-link";
+
     return (
         <nav>
-            <h2>Inventory Management</h2>
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/products">Products</Link>
-            <Link to="/inventory">Inventory</Link>
-            <Link to="/orders">Orders</Link>
-            <Link to="/notifications">Notifications</Link>
-            <Link to="/suppliers">Suppliers</Link>
-            <Link to="/discounts">Discounts</Link>
-            <Link to="/profile">Profile</Link>
+            {/* logo — always on the far left */}
+            <span className="nav-brand">Inventory Management</span>
 
-            <button onClick={handleLogout}>Logout</button>
+            {/* main navigation links — center section */}
+            <div className="nav-links">
+                <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
+                <NavLink to="/products" className={linkClass}>Products</NavLink>
+                <NavLink to="/inventory" className={linkClass}>Inventory</NavLink>
+                <NavLink to="/orders" className={linkClass}>Orders</NavLink>
+                <NavLink to="/notifications" className={linkClass}>Notifications</NavLink>
+                <NavLink to="/suppliers" className={linkClass}>Suppliers</NavLink>
+                <NavLink to="/discounts" className={linkClass}>Discounts</NavLink>
+            </div>
+
+            {/* user section — always on the far right */}
+            <div className="nav-user">
+                <NavLink to="/profile" className={linkClass}>Profile</NavLink>
+                <button className="nav-logout" onClick={handleLogout}>Logout</button>
+            </div>
         </nav>
     );
 }
