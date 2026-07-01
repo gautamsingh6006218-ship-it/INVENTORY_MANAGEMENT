@@ -29,6 +29,7 @@ function Navbar() {
             <Link to="/notifications">Notifications</Link>
             <Link to="/suppliers">Suppliers</Link>
             <Link to="/discounts">Discounts</Link>
+            <Link to="/profile">Profile</Link>
 
             <button onClick={handleLogout}>Logout</button>
         </nav>

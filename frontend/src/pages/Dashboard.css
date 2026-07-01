@@ -134,3 +134,34 @@
     color: #a0a0b0;
     white-space: nowrap;
 }
+
+/* shown when a panel section has no data */
+.empty-state {
+    color: #a0a0b0;
+    font-size: 13px;
+    padding: 8px 0;
+    margin: 0;
+}
+
+/* divider line between the two sections inside the right panel */
+.panel-divider {
+    border: none;
+    border-top: 1px solid #16213e;
+    margin: 20px 0;
+}
+
+/* low stock alert row — product on left, quantity on right */
+.alert-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #16213e;
+    font-size: 13px;
+    color: #e0e0e0;
+}
+
+/* quantity shown in orange to signal restock needed */
+.alert-qty {
+    color: #e08c00;
+    font-weight: 600;
+}

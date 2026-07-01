@@ -32,6 +32,7 @@ const attachToken = (instance) => {
         }
     );
 };
+attachToken(userAPI);
 attachToken(productAPI);
 attachToken(inventoryAPI);
 attachToken(orderAPI);

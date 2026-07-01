@@ -9,6 +9,7 @@ import Orders from './pages/Orders';
 import Notifications from './pages/Notifications';
 import Suppliers from './pages/Suppliers';
 import Discounts from './pages/Discounts';
+import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/notifications" element={<ProtectedRoute><Navbar /><Notifications /></ProtectedRoute>} />
                 <Route path="/suppliers" element={<ProtectedRoute><Navbar /><Suppliers /></ProtectedRoute>} />
                 <Route path="/discounts" element={<ProtectedRoute><Navbar /><Discounts /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Navbar /><Profile /></ProtectedRoute>} />
             </Routes>
         </BrowserRouter>
     );

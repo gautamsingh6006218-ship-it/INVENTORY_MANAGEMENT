@@ -1,0 +1,106 @@
+.profile-page {
+    padding: 30px;
+    max-width: 600px;
+}
+
+.profile-page h2 {
+    color: #e94560;
+    margin-bottom: 24px;
+}
+
+.loading {
+    color: #a0a0b0;
+}
+
+/* top card — avatar + name + role badge */
+.profile-card {
+    background-color: #16213e;
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+/* circle avatar with user initials */
+.avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #e94560;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-name {
+    color: #e0e0e0;
+    font-size: 22px;
+    margin: 0 0 8px 0;
+}
+
+/* role badge — colour matches role type */
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.role-admin    { background-color: #3a0060; color: #ce93d8; }
+.role-manager  { background-color: #0a2a4a; color: #64b5f6; }
+.role-staff    { background-color: #0a4a2a; color: #4caf50; }
+
+/* detail rows card */
+.detail-card {
+    background-color: #16213e;
+    border-radius: 12px;
+    padding: 8px 0;
+    margin-bottom: 24px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: #a0a0b0;
+    font-size: 14px;
+}
+
+.detail-value {
+    color: #e0e0e0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn-logout {
+    padding: 12px 28px;
+    background-color: #4a0a0a;
+    color: #e94560;
+    border: 1px solid #e94560;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-logout:hover {
+    background-color: #e94560;
+    color: #fff;
+}
