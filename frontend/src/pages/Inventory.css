@@ -1,0 +1,16 @@
+.page {
+    padding: 30px;
+}
+
+.page h2 {
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+/* card for each stock item */
+.card {
+    background-color: #0f3460;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}

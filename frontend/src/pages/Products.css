@@ -1,0 +1,21 @@
+.page {
+    padding: 30px;
+}
+
+.page h2 {
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+.page h3 {
+    color: #e0e0e0;
+    margin: 15px 0 10px 0;
+}
+
+/* card for each product item */
+.card {
+    background-color: #0f3460;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
