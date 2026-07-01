@@ -10,6 +10,7 @@ import Notifications from './pages/Notifications';
 import Suppliers from './pages/Suppliers';
 import Discounts from './pages/Discounts';
 import Profile from './pages/Profile';
+import Reports from './pages/Reports';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/suppliers" element={<ProtectedRoute><Navbar /><Suppliers /></ProtectedRoute>} />
                 <Route path="/discounts" element={<ProtectedRoute><Navbar /><Discounts /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Navbar /><Profile /></ProtectedRoute>} />
+                <Route path="/reports" element={<ProtectedRoute><Navbar /><Reports /></ProtectedRoute>} />
             </Routes>
         </BrowserRouter>
     );

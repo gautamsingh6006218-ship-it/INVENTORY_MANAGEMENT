@@ -33,6 +33,7 @@ function Navbar() {
                 <NavLink to="/notifications" className={linkClass}>Notifications</NavLink>
                 <NavLink to="/suppliers" className={linkClass}>Suppliers</NavLink>
                 <NavLink to="/discounts" className={linkClass}>Discounts</NavLink>
+                <NavLink to="/reports" className={linkClass}>Reports</NavLink>
             </div>
 
             {/* user section — always on the far right */}

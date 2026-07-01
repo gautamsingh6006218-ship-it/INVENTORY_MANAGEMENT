@@ -9,6 +9,7 @@ export const orderAPI = axios.create({ baseURL: 'http://127.0.0.1:8002/api/order
 export const notificationAPI = axios.create({ baseURL: 'http://127.0.0.1:8007/api/notifications' });
 export const supplierAPI = axios.create({ baseURL: 'http://127.0.0.1:8004/api' });
 export const discountAPI = axios.create({ baseURL: 'http://127.0.0.1:8005/api' });
+export const reportAPI = axios.create({ baseURL: 'http://127.0.0.1:8006/api' });
 
 const attachToken = (instance) => {
     // request interceptor — attaches JWT token to every outgoing request
@@ -39,4 +40,5 @@ attachToken(orderAPI);
 attachToken(notificationAPI);
 attachToken(supplierAPI);
 attachToken(discountAPI);
+attachToken(reportAPI);
 
