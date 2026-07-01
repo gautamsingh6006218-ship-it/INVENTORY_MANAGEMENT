@@ -4,33 +4,38 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Register.css";
 
 function Register() {
-    // one state per form field — React tracks every keystroke via onChange
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("staff");
     const [phone, setPhone] = useState("");
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState({});
 
     const navigate = useNavigate();
 
-    // async because POST to backend takes time — await pauses until response comes back
+    const validate = () => {
+        const errs = {};
+        if (!username.trim()) errs.username = "Username is required";
+        if (!email.trim()) errs.email = "Email is required";
+        else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Invalid email format";
+        if (!password) errs.password = "Password is required";
+        else if (password.length < 6) errs.password = "Password must be at least 6 characters";
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleRegister = async () => {
-        setError("");
+        if (!validate()) return;
         try {
-            // sends all fields to POST /register/ — role and phone are optional on backend
             await userAPI.post("/register/", { username, email, password, role, phone });
-            // on success, redirect to login so user can sign in with their new account
             navigate("/");
         } catch (err) {
-            // backend returns field-level errors e.g. { email: ["already exists"] }
             const data = err.response?.data;
             if (data) {
-                // grab first error message from whatever field failed
                 const firstError = Object.values(data)[0];
-                setError(Array.isArray(firstError) ? firstError[0] : firstError);
+                setErrors({ api: Array.isArray(firstError) ? firstError[0] : firstError });
             } else {
-                setError("Registration failed. Please try again.");
+                setErrors({ api: "Registration failed. Please try again." });
             }
         }
     };
@@ -38,36 +43,19 @@ function Register() {
     return (
         <div className="register-container">
             <h2>Create Account</h2>
+            {errors.api && <p className="register-error">{errors.api}</p>}
 
-            {/* show backend error message if registration fails */}
-            {error && <p className="register-error">{error}</p>}
+            <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            {errors.username && <p className="field-error">{errors.username}</p>}
 
-            <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Password (min 6 characters)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="Phone (optional)"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-            />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            {errors.email && <p className="field-error">{errors.email}</p>}
 
-            {/* dropdown for role — backend defaults to 'staff' if not sent */}
+            <input type="password" placeholder="Password (min 6 characters)" value={password} onChange={(e) => setPassword(e.target.value)} />
+            {errors.password && <p className="field-error">{errors.password}</p>}
+
+            <input type="text" placeholder="Phone (optional)" value={phone} onChange={(e) => setPhone(e.target.value)} />
+
             <select value={role} onChange={(e) => setRole(e.target.value)}>
                 <option value="staff">Staff</option>
                 <option value="admin">Admin</option>
@@ -75,8 +63,6 @@ function Register() {
             </select>
 
             <button onClick={handleRegister}>Register</button>
-
-            {/* link back to login for users who already have an account */}
             <p className="register-link">
                 Already have an account? <Link to="/">Login</Link>
             </p>

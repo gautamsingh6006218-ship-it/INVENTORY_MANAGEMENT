@@ -10,6 +10,7 @@ function Orders() {
     const [quantity, setQuantity] = useState('');
     const [totalPrice, setTotalPrice] = useState('');
     const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchOrders();
@@ -21,7 +22,18 @@ function Orders() {
             .catch(err => console.log(err));
     };
 
+    const validate = () => {
+        const errs = {};
+        if (!customerId) errs.customerId = 'Customer ID is required';
+        if (!productId) errs.productId = 'Product ID is required';
+        if (!quantity || quantity <= 0) errs.quantity = 'Quantity must be greater than 0';
+        if (!totalPrice || totalPrice <= 0) errs.totalPrice = 'Total price must be greater than 0';
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handlePlaceOrder = async () => {
+        if (!validate()) return;
         setError('');
         try {
             await orderAPI.post('/', {
@@ -83,18 +95,22 @@ function Orders() {
                         <label>Customer ID</label>
                         <input type="number" value={customerId} onChange={(e) => setCustomerId(e.target.value)} placeholder="Customer ID" />
                     </div>
+                    {errors.customerId && <p className="field-error">{errors.customerId}</p>}
                     <div className="form-row">
                         <label>Product ID</label>
                         <input type="number" value={productId} onChange={(e) => setProductId(e.target.value)} placeholder="Product ID" />
                     </div>
+                    {errors.productId && <p className="field-error">{errors.productId}</p>}
                     <div className="form-row">
                         <label>Quantity</label>
                         <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="Number of units" />
                     </div>
+                    {errors.quantity && <p className="field-error">{errors.quantity}</p>}
                     <div className="form-row">
                         <label>Total Price</label>
                         <input type="number" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)} placeholder="0.00" />
                     </div>
+                    {errors.totalPrice && <p className="field-error">{errors.totalPrice}</p>}
                     <button className="btn-submit" onClick={handlePlaceOrder}>Place Order</button>
                 </div>
             )}

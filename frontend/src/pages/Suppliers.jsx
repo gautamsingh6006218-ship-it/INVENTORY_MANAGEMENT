@@ -9,6 +9,7 @@ function Suppliers() {
     const [editData, setEditData] = useState({});
     const [error, setError] = useState('');
     const [editError, setEditError] = useState('');
+    const [errors, setErrors] = useState({});
 
     // add form fields
     const [name, setName] = useState('');
@@ -28,7 +29,23 @@ function Suppliers() {
             .catch(console.log);
     };
 
+    const validate = () => {
+        const errs = {};
+        if (!name.trim()) errs.name = 'Name is required';
+        if (!email.trim()) errs.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(email)) errs.email = 'Invalid email format';
+        if (!phone.trim()) errs.phone = 'Phone is required';
+        if (!address.trim()) errs.address = 'Address is required';
+        if (!productId) errs.productId = 'Product ID is required';
+        if (!supplyTimeDays || supplyTimeDays <= 0) errs.supplyTimeDays = 'Supply time must be greater than 0';
+        if (!rating) errs.rating = 'Rating is required';
+        else if (rating < 1 || rating > 5) errs.rating = 'Rating must be between 1 and 5';
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleAdd = async () => {
+        if (!validate()) return;
         setError('');
         try {
             await supplierAPI.post('/suppliers/', {
@@ -115,11 +132,17 @@ function Suppliers() {
                     <h3>Add New Supplier</h3>
                     {error && <p className="form-error">{error}</p>}
                     {field('Name', name, e => setName(e.target.value), 'text', 'Supplier name')}
+                    {errors.name && <p className="field-error">{errors.name}</p>}
                     {field('Email', email, e => setEmail(e.target.value), 'email', 'supplier@email.com')}
+                    {errors.email && <p className="field-error">{errors.email}</p>}
                     {field('Phone', phone, e => setPhone(e.target.value), 'text', 'Phone number')}
+                    {errors.phone && <p className="field-error">{errors.phone}</p>}
                     {field('Address', address, e => setAddress(e.target.value), 'text', 'Full address')}
+                    {errors.address && <p className="field-error">{errors.address}</p>}
                     {field('Product ID', productId, e => setProductId(e.target.value), 'number', 'Product ID')}
+                    {errors.productId && <p className="field-error">{errors.productId}</p>}
                     {field('Supply Time (days)', supplyTimeDays, e => setSupplyTimeDays(e.target.value), 'number', 'e.g. 7')}
+                    {errors.supplyTimeDays && <p className="field-error">{errors.supplyTimeDays}</p>}
                     <div className="form-row">
                         <label>Transport Mode</label>
                         <select value={transportMode} onChange={e => setTransportMode(e.target.value)}>

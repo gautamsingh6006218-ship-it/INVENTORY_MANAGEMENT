@@ -12,12 +12,14 @@ function Inventory() {
     const [warehouseLocation, setWarehouseLocation] = useState('');
     const [reorderLevel, setReorderLevel] = useState(10);
     const [addError, setAddError] = useState('');
+    const [addErrors, setAddErrors] = useState({});
 
     // tracks which stock entry the user is adjusting and whether they're adding or reducing
     const [adjustingItem, setAdjustingItem] = useState(null);
     const [adjustMode, setAdjustMode] = useState(''); // 'add' or 'reduce'
     const [adjustQty, setAdjustQty] = useState('');
     const [adjustError, setAdjustError] = useState('');
+    const [adjustErrors, setAdjustErrors] = useState({});
 
     useEffect(() => { fetchStock(); }, []);
 
@@ -27,8 +29,28 @@ function Inventory() {
             .catch(console.log);
     };
 
+    const validateAdd = () => {
+        const errs = {};
+        if (!productId) errs.productId = 'Product ID is required';
+        if (quantity === '') errs.quantity = 'Quantity is required';
+        else if (quantity < 0) errs.quantity = 'Quantity cannot be negative';
+        if (!warehouseLocation.trim()) errs.warehouseLocation = 'Warehouse location is required';
+        if (reorderLevel === '') errs.reorderLevel = 'Reorder level is required';
+        else if (reorderLevel < 0) errs.reorderLevel = 'Reorder level cannot be negative';
+        setAddErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
+    const validateAdjust = () => {
+        const errs = {};
+        if (!adjustQty || adjustQty <= 0) errs.adjustQty = 'Quantity must be greater than 0';
+        setAdjustErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     // POST / — creates a brand new stock record for a product
     const handleCreateStock = async () => {
+        if (!validateAdd()) return;
         setAddError('');
         try {
             await inventoryAPI.post('/', {
@@ -61,6 +83,7 @@ function Inventory() {
     // PUT /:id/add-stock/ — adds units to existing quantity, fires stock.added Kafka event
     // PUT /:id/reduce-stock/ — subtracts units, fires stock.low event if below reorder_level
     const handleAdjust = async () => {
+        if (!validateAdjust()) return;
         setAdjustError('');
         const endpoint = adjustMode === 'add'
             ? `/${adjustingItem.id}/add-stock/`
@@ -103,18 +126,22 @@ function Inventory() {
                         <label>Product ID</label>
                         <input type="number" value={productId} onChange={e => setProductId(e.target.value)} placeholder="Product ID" />
                     </div>
+                    {addErrors.productId && <p className="field-error">{addErrors.productId}</p>}
                     <div className="form-row">
                         <label>Quantity</label>
                         <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Initial stock count" />
                     </div>
+                    {addErrors.quantity && <p className="field-error">{addErrors.quantity}</p>}
                     <div className="form-row">
                         <label>Warehouse Location</label>
                         <input value={warehouseLocation} onChange={e => setWarehouseLocation(e.target.value)} placeholder="e.g. Aisle 3, Shelf B" />
                     </div>
+                    {addErrors.warehouseLocation && <p className="field-error">{addErrors.warehouseLocation}</p>}
                     <div className="form-row">
                         <label>Reorder Level</label>
                         <input type="number" value={reorderLevel} onChange={e => setReorderLevel(e.target.value)} placeholder="Alert threshold" />
                     </div>
+                    {addErrors.reorderLevel && <p className="field-error">{addErrors.reorderLevel}</p>}
                     <button className="btn-submit" onClick={handleCreateStock}>Create</button>
                 </div>
             )}
@@ -138,6 +165,7 @@ function Inventory() {
                             autoFocus
                         />
                     </div>
+                    {adjustErrors.adjustQty && <p className="field-error">{adjustErrors.adjustQty}</p>}
                     <div className="form-actions">
                         <button
                             className={adjustMode === 'add' ? 'btn-add' : 'btn-reduce'}

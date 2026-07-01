@@ -10,3 +10,11 @@ body {
     color: #e0e0e0;
     font-family: Arial, sans-serif;
 }
+
+/* inline field error — shown below an input when validation fails */
+.field-error {
+    color: #e94560;
+    font-size: 12px;
+    margin: -8px 0 8px 0;
+    padding-left: 2px;
+}

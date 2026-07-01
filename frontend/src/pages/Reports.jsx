@@ -13,6 +13,7 @@ function Reports() {
     const [createdBy, setCreatedBy] = useState('');
     const [dataInput, setDataInput] = useState('');
     const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchReports();
@@ -34,6 +35,11 @@ function Reports() {
     };
 
     const handleGenerate = async () => {
+        const errs = {};
+        if (!createdBy) errs.createdBy = 'User ID is required';
+        setErrors(errs);
+        if (Object.keys(errs).length > 0) return;
+
         setError('');
         // data field must be valid JSON — parse it before sending
         let parsedData;
@@ -118,6 +124,7 @@ function Reports() {
                             placeholder="User ID"
                         />
                     </div>
+                    {errors.createdBy && <p className="field-error">{errors.createdBy}</p>}
                     <div className="form-row form-row--top">
                         <label>Data (JSON)</label>
                         {/* textarea for JSON input — backend stores this in a JSONField */}

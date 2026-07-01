@@ -4,48 +4,52 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
-
-    // state to store what user types — React re-renders whenever these change
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
-    // async because API call to backend takes time — await waits for response before proceeding
+    // validate returns false if any field fails — sets errors so they show under each input
+    const validate = () => {
+        const errs = {};
+        if (!email.trim()) errs.email = "Email is required";
+        else if (!/\S+@\S+\.\S+/.test(email)) errs.email = "Invalid email format";
+        if (!password) errs.password = "Password is required";
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     const handleLogin = async () => {
+        if (!validate()) return;
         try {
-            // sends email and password as JSON to POST /login/ on user-service
             const response = await userAPI.post("/login/", { email, password });
-            // saves JWT token in localStorage so other pages can attach it to requests
             localStorage.setItem("token", response.data.access);
             localStorage.setItem("refresh", response.data.refresh);
             navigate("/dashboard");
         } catch (error) {
-            // backend returns 401 if credentials are wrong — caught here
-            alert("Invalid email or password");
+            setErrors({ api: "Invalid email or password" });
         }
     };
 
     return (
         <div className="login-container">
             <h2>Login</h2>
-            {/* value and onChange make this a controlled input — React tracks every keystroke */}
+            {errors.api && <p className="field-error" style={{ textAlign: 'center' }}>{errors.api}</p>}
             <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
+            {errors.email && <p className="field-error">{errors.email}</p>}
             <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            {/* onClick triggers handleLogin which calls the backend */}
+            {errors.password && <p className="field-error">{errors.password}</p>}
             <button onClick={handleLogin}>Login</button>
-
-            {/* link to register page for new users */}
             <p className="login-link">
                 Don't have an account? <Link to="/register">Register</Link>
             </p>

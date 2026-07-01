@@ -9,6 +9,8 @@ function Discounts() {
     const [editData, setEditData] = useState({});
     const [error, setError] = useState('');
     const [editError, setEditError] = useState('');
+    const [errors, setErrors] = useState({});
+    const [editErrors, setEditErrors] = useState({});
 
     // add form fields
     const [code, setCode] = useState('');
@@ -19,6 +21,28 @@ function Discounts() {
     const [validFrom, setValidFrom] = useState('');
     const [validUntil, setValidUntil] = useState('');
 
+    const validate = () => {
+        const errs = {};
+        if (!code.trim()) errs.code = 'Discount code is required';
+        if (!value || value <= 0) errs.value = 'Value must be greater than 0';
+        if (!validFrom) errs.validFrom = 'Valid from date is required';
+        if (!validUntil) errs.validUntil = 'Valid until date is required';
+        else if (validFrom && validUntil <= validFrom) errs.validUntil = 'Valid until must be after valid from';
+        setErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
+    const validateEdit = () => {
+        const errs = {};
+        if (!editData.code?.trim()) errs.code = 'Discount code is required';
+        if (!editData.value || editData.value <= 0) errs.value = 'Value must be greater than 0';
+        if (!editData.valid_from) errs.valid_from = 'Valid from date is required';
+        if (!editData.valid_until) errs.valid_until = 'Valid until date is required';
+        else if (editData.valid_from && editData.valid_until <= editData.valid_from) errs.valid_until = 'Valid until must be after valid from';
+        setEditErrors(errs);
+        return Object.keys(errs).length === 0;
+    };
+
     useEffect(() => { fetchDiscounts(); }, []);
 
     const fetchDiscounts = () => {
@@ -28,6 +52,7 @@ function Discounts() {
     };
 
     const handleAdd = async () => {
+        if (!validate()) return;
         setError('');
         try {
             await discountAPI.post('/discounts/', {
@@ -66,6 +91,7 @@ function Discounts() {
     };
 
     const handleUpdate = async () => {
+        if (!validateEdit()) return;
         setEditError('');
         try {
             await discountAPI.put(`/discounts/${editingDiscount.id}/`, {
@@ -121,9 +147,9 @@ function Discounts() {
                         <label>Code</label>
                         <input value={code} onChange={e => setCode(e.target.value)} placeholder="e.g. SAVE10" />
                     </div>
+                    {errors.code && <p className="field-error">{errors.code}</p>}
                     <div className="form-row">
                         <label>Type</label>
-                        {/* percentage = % off, fixed = flat dollar amount off */}
                         <select value={discountType} onChange={e => setDiscountType(e.target.value)}>
                             <option value="percentage">Percentage</option>
                             <option value="fixed">Fixed Amount</option>
@@ -133,6 +159,7 @@ function Discounts() {
                         <label>Value</label>
                         <input type="number" value={value} onChange={e => setValue(e.target.value)} placeholder="e.g. 10 for 10% or $10" />
                     </div>
+                    {errors.value && <p className="field-error">{errors.value}</p>}
                     <div className="form-row">
                         <label>Product ID</label>
                         <input type="number" value={productId} onChange={e => setProductId(e.target.value)} placeholder="Product ID" />
@@ -145,10 +172,12 @@ function Discounts() {
                         <label>Valid From</label>
                         <input type="date" value={validFrom} onChange={e => setValidFrom(e.target.value)} />
                     </div>
+                    {errors.validFrom && <p className="field-error">{errors.validFrom}</p>}
                     <div className="form-row">
                         <label>Valid Until</label>
                         <input type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} />
                     </div>
+                    {errors.validUntil && <p className="field-error">{errors.validUntil}</p>}
                     <button className="btn-submit" onClick={handleAdd}>Add Discount</button>
                 </div>
             )}
@@ -162,6 +191,7 @@ function Discounts() {
                         <label>Code</label>
                         <input value={editData.code || ''} onChange={e => setEditData({ ...editData, code: e.target.value })} />
                     </div>
+                    {editErrors.code && <p className="field-error">{editErrors.code}</p>}
                     <div className="form-row">
                         <label>Type</label>
                         <select value={editData.discount_type || 'percentage'} onChange={e => setEditData({ ...editData, discount_type: e.target.value })}>
@@ -169,22 +199,29 @@ function Discounts() {
                             <option value="fixed">Fixed Amount</option>
                         </select>
                     </div>
-                    {[
-                        ['Value', 'value'], ['Product ID', 'product_id'], ['Min Order Value', 'min_order_value'],
-                    ].map(([label, key]) => (
-                        <div className="form-row" key={key}>
-                            <label>{label}</label>
-                            <input type="number" value={editData[key] || ''} onChange={e => setEditData({ ...editData, [key]: e.target.value })} />
-                        </div>
-                    ))}
+                    <div className="form-row">
+                        <label>Value</label>
+                        <input type="number" value={editData.value || ''} onChange={e => setEditData({ ...editData, value: e.target.value })} />
+                    </div>
+                    {editErrors.value && <p className="field-error">{editErrors.value}</p>}
+                    <div className="form-row">
+                        <label>Product ID</label>
+                        <input type="number" value={editData.product_id || ''} onChange={e => setEditData({ ...editData, product_id: e.target.value })} />
+                    </div>
+                    <div className="form-row">
+                        <label>Min Order Value</label>
+                        <input type="number" value={editData.min_order_value || ''} onChange={e => setEditData({ ...editData, min_order_value: e.target.value })} />
+                    </div>
                     <div className="form-row">
                         <label>Valid From</label>
                         <input type="date" value={editData.valid_from || ''} onChange={e => setEditData({ ...editData, valid_from: e.target.value })} />
                     </div>
+                    {editErrors.valid_from && <p className="field-error">{editErrors.valid_from}</p>}
                     <div className="form-row">
                         <label>Valid Until</label>
                         <input type="date" value={editData.valid_until || ''} onChange={e => setEditData({ ...editData, valid_until: e.target.value })} />
                     </div>
+                    {editErrors.valid_until && <p className="field-error">{editErrors.valid_until}</p>}
                     <div className="form-actions">
                         <button className="btn-submit" onClick={handleUpdate}>Save Changes</button>
                         <button className="btn-cancel" onClick={() => setEditingDiscount(null)}>Cancel</button>
