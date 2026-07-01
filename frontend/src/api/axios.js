@@ -11,13 +11,26 @@ export const supplierAPI = axios.create({ baseURL: 'http://127.0.0.1:8004/api' }
 export const discountAPI = axios.create({ baseURL: 'http://127.0.0.1:8005/api' });
 
 const attachToken = (instance) => {
+    // request interceptor — attaches JWT token to every outgoing request
     instance.interceptors.request.use((config) => {
         const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+        if (token) config.headers.Authorization = `Bearer ${token}`;
         return config;
     });
+
+    // response interceptor — if any API returns 401 (token expired/invalid), redirect to login
+    instance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response?.status === 401) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("refresh");
+                // window.location.href works outside React components unlike useNavigate
+                window.location.href = "/";
+            }
+            return Promise.reject(error);
+        }
+    );
 };
 attachToken(productAPI);
 attachToken(inventoryAPI);
