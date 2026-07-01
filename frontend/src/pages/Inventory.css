@@ -1,11 +1,126 @@
-.page {
-    padding: 30px;
+.page { padding: 30px; }
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.page-header h2 { color: #e94560; margin: 0; }
+
+.btn-primary {
+    padding: 10px 20px;
+    background-color: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-primary:hover { background-color: #c73652; }
+
+/* base form card */
+.form-card {
+    background-color: #16213e;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-left: 4px solid #16213e;
+}
+.form-card h3 { color: #e94560; margin: 0 0 16px 0; }
+
+/* green left border when adding stock */
+.form-card--add { border-left: 4px solid #4caf50; }
+
+/* orange left border when reducing stock */
+.form-card--reduce { border-left: 4px solid #e08c00; }
+
+.adjust-current {
+    color: #a0a0b0;
+    font-size: 14px;
+    margin: 0 0 16px 0;
+}
+.adjust-current strong { color: #e0e0e0; }
+
+.form-error {
+    color: #e94560;
+    font-size: 13px;
+    background-color: #1f000a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
 }
 
-.page h2 {
-    color: #e94560;
-    margin-bottom: 20px;
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
 }
+.form-row label { width: 160px; flex-shrink: 0; color: #a0a0b0; font-size: 14px; }
+.form-row input {
+    flex: 1;
+    padding: 10px 12px;
+    background-color: #0f3460;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+}
+.form-row input:focus { border-color: #e94560; }
+
+.form-actions { display: flex; gap: 12px; margin-top: 8px; }
+
+.btn-submit {
+    padding: 10px 24px;
+    background-color: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-submit:hover { background-color: #c73652; }
+
+/* green confirm button for add stock */
+.btn-add {
+    padding: 10px 24px;
+    background-color: #0a4a2a;
+    color: #4caf50;
+    border: 1px solid #4caf50;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-add:hover { background-color: #4caf50; color: #fff; }
+
+/* orange confirm button for reduce stock */
+.btn-reduce {
+    padding: 10px 24px;
+    background-color: #3a2000;
+    color: #e08c00;
+    border: 1px solid #e08c00;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-reduce:hover { background-color: #e08c00; color: #fff; }
+
+.btn-cancel {
+    padding: 10px 24px;
+    background-color: transparent;
+    color: #a0a0b0;
+    border: 1px solid #a0a0b0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.btn-cancel:hover { border-color: #e0e0e0; color: #e0e0e0; }
 
 .inventory-table {
     width: 100%;
@@ -14,11 +129,7 @@
     border-radius: 8px;
     overflow: hidden;
 }
-
-.inventory-table thead {
-    background-color: #16213e;
-}
-
+.inventory-table thead { background-color: #16213e; }
 .inventory-table th {
     padding: 12px 16px;
     text-align: left;
@@ -28,24 +139,53 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .inventory-table td {
     padding: 12px 16px;
     color: #e0e0e0;
     font-size: 14px;
     border-top: 1px solid #1a1a2e;
 }
+.inventory-table tbody tr:nth-child(even) { background-color: #122050; }
+.inventory-table tbody tr:hover { background-color: #1a3a6e; }
 
-.inventory-table tbody tr:nth-child(even) {
-    background-color: #122050;
+/* quantity shown in red when at or below reorder level */
+.low-stock { color: #e94560; font-weight: bold; }
+
+.action-cell { display: flex; gap: 8px; align-items: center; }
+
+/* small green + Add button in the table row */
+.btn-add-sm {
+    padding: 5px 10px;
+    background-color: #0a4a2a;
+    color: #4caf50;
+    border: 1px solid #4caf50;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
 }
+.btn-add-sm:hover { background-color: #4caf50; color: #fff; }
 
-.inventory-table tbody tr:hover {
-    background-color: #1a3a6e;
+/* small orange - Reduce button in the table row */
+.btn-reduce-sm {
+    padding: 5px 10px;
+    background-color: #3a2000;
+    color: #e08c00;
+    border: 1px solid #e08c00;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
 }
+.btn-reduce-sm:hover { background-color: #e08c00; color: #fff; }
 
-/* quantity shown in red when at or below reorder level — signals restock needed */
-.low-stock {
+.btn-delete {
+    padding: 5px 12px;
+    background-color: #4a0a0a;
     color: #e94560;
-    font-weight: bold;
+    border: 1px solid #e94560;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
 }
+.btn-delete:hover { background-color: #e94560; color: #fff; }
