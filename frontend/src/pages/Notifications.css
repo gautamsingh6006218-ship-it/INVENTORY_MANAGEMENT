@@ -2,19 +2,136 @@
     padding: 30px;
 }
 
-.page h2 {
+/* header row — title + unread badge on left, mark all button on right */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header h2 {
     color: #e94560;
-    margin-bottom: 20px;
+    margin: 0;
 }
 
-/* card for each notification — unread highlighted differently */
-.card {
-    background-color: #0f3460;
-    padding: 15px;
-    margin-bottom: 10px;
+/* small pill showing how many notifications are unread */
+.unread-badge {
+    background-color: #e94560;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.btn-mark-all {
+    padding: 8px 18px;
+    background-color: #0a4a2a;
+    color: #4caf50;
+    border: 1px solid #4caf50;
     border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-mark-all:hover { background-color: #4caf50; color: #fff; }
+
+.empty-state {
+    color: #a0a0b0;
+    font-size: 14px;
 }
 
-.card.unread {
+/* notification card */
+.notif-card {
+    background-color: #0f3460;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-left: 4px solid transparent;
+}
+
+/* unread cards get a red left border */
+.notif-card--unread {
     border-left: 4px solid #e94560;
 }
+
+.notif-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.notif-message {
+    color: #e0e0e0;
+    font-size: 14px;
+    margin: 0;
+    flex: 1;
+}
+
+/* read/unread tag next to message */
+.notif-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.tag-unread { background-color: #4a0a0a; color: #e94560; }
+.tag-read   { background-color: #1a2a1a; color: #a0a0b0; }
+
+/* action buttons on the right side of each card */
+.notif-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* green button — marks an unread notification as read */
+.btn-read {
+    padding: 6px 14px;
+    background-color: #0a4a2a;
+    color: #4caf50;
+    border: 1px solid #4caf50;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-read:hover { background-color: #4caf50; color: #fff; }
+
+/* grey button — marks a read notification back to unread */
+.btn-unread {
+    padding: 6px 14px;
+    background-color: #1a1a2e;
+    color: #a0a0b0;
+    border: 1px solid #a0a0b0;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-unread:hover { border-color: #e0e0e0; color: #e0e0e0; }
+
+.btn-delete {
+    padding: 6px 14px;
+    background-color: #4a0a0a;
+    color: #e94560;
+    border: 1px solid #e94560;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.btn-delete:hover { background-color: #e94560; color: #fff; }
