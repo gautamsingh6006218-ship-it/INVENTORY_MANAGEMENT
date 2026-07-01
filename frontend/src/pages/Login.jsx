@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { userAPI } from "../api/axios";
-import { useNavigate} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
@@ -44,6 +44,11 @@ function Login() {
             />
             {/* onClick triggers handleLogin which calls the backend */}
             <button onClick={handleLogin}>Login</button>
+
+            {/* link to register page for new users */}
+            <p className="login-link">
+                Don't have an account? <Link to="/register">Register</Link>
+            </p>
         </div>
     );
 }

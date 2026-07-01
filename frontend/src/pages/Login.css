@@ -32,3 +32,17 @@
     cursor: pointer;
     font-size: 16px;
 }
+
+.login-link {
+    font-size: 13px;
+    color: #a0a0b0;
+}
+
+.login-link a {
+    color: #e94560;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}

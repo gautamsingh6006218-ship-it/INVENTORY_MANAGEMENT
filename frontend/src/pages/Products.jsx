@@ -11,7 +11,6 @@ function Products() {
 
     // [] means run once when page loads — fetches all three categories simultaneously
     useEffect(() => {
-        // each category is a separate endpoint in product-service
         productAPI.get('/electronics/')
             .then(response => setElectronics(response.data))
             .catch(error => console.log(error));
@@ -28,25 +27,82 @@ function Products() {
     return (
         <div className="page">
             <h2>Products</h2>
+
+            {/* Electronics table — columns specific to electronics products */}
             <h3>Electronics</h3>
-            {/* map loops through array and renders a card for each product */}
-            {electronics.map(product => (
-                <div className="card" key={product.id}>
-                    <p>{product.name} — ${product.price}</p>
-                </div>
-            ))}
+            <table className="product-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Brand</th>
+                        <th>Warranty (yrs)</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {electronics.map(product => (
+                        <tr key={product.id}>
+                            <td>{product.name}</td>
+                            <td>{product.sku}</td>
+                            <td>{product.brand}</td>
+                            <td>{product.warrenty_years}</td>
+                            <td>${product.price}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* Food table — columns specific to food products */}
             <h3>Food</h3>
-            {food.map(product => (
-                <div className="card" key={product.id}>
-                    <p>{product.name} — ${product.price}</p>
-                </div>
-            ))}
+            <table className="product-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Expiry Date</th>
+                        <th>Organic</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {food.map(product => (
+                        <tr key={product.id}>
+                            <td>{product.name}</td>
+                            <td>{product.sku}</td>
+                            <td>{product.expiry_date}</td>
+                            {/* shows Yes/No instead of true/false for readability */}
+                            <td>{product.is_organic ? 'Yes' : 'No'}</td>
+                            <td>${product.price}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* Clothing table — columns specific to clothing products */}
             <h3>Clothing</h3>
-            {clothing.map(product => (
-                <div className="card" key={product.id}>
-                    <p>{product.name} — ${product.price}</p>
-                </div>
-            ))}
+            <table className="product-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Size</th>
+                        <th>Material</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clothing.map(product => (
+                        <tr key={product.id}>
+                            <td>{product.name}</td>
+                            <td>{product.sku}</td>
+                            <td>{product.size}</td>
+                            <td>{product.material}</td>
+                            <td>${product.price}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
