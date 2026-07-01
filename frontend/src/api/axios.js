@@ -7,9 +7,8 @@ export const productAPI = axios.create({ baseURL: 'http://127.0.0.1:8000/api/pro
 export const inventoryAPI = axios.create({ baseURL: 'http://127.0.0.1:8001/api/inventory' });
 export const orderAPI = axios.create({ baseURL: 'http://127.0.0.1:8002/api/orders' });
 export const notificationAPI = axios.create({ baseURL: 'http://127.0.0.1:8007/api/notifications' });
-
-
-
+export const supplierAPI = axios.create({ baseURL: 'http://127.0.0.1:8004/api' });
+export const discountAPI = axios.create({ baseURL: 'http://127.0.0.1:8005/api' });
 
 const attachToken = (instance) => {
     instance.interceptors.request.use((config) => {
@@ -24,4 +23,6 @@ attachToken(productAPI);
 attachToken(inventoryAPI);
 attachToken(orderAPI);
 attachToken(notificationAPI);
+attachToken(supplierAPI);
+attachToken(discountAPI);
 

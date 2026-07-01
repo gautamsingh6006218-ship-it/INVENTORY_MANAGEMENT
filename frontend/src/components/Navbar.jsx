@@ -27,6 +27,8 @@ function Navbar() {
             <Link to="/inventory">Inventory</Link>
             <Link to="/orders">Orders</Link>
             <Link to="/notifications">Notifications</Link>
+            <Link to="/suppliers">Suppliers</Link>
+            <Link to="/discounts">Discounts</Link>
 
             <button onClick={handleLogout}>Logout</button>
         </nav>

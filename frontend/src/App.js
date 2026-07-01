@@ -7,6 +7,8 @@ import Products from './pages/Products';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import Notifications from './pages/Notifications';
+import Suppliers from './pages/Suppliers';
+import Discounts from './pages/Discounts';
 import Navbar from './components/Navbar';
 import './App.css';
 
@@ -21,6 +23,8 @@ function App() {
                 <Route path="/inventory" element={<><Navbar /><Inventory /></>} />
                 <Route path="/orders" element={<><Navbar /><Orders /></>} />
                 <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
+                <Route path="/suppliers" element={<><Navbar /><Suppliers /></>} />
+                <Route path="/discounts" element={<><Navbar /><Discounts /></>} />
             </Routes>
         </BrowserRouter>
     );

@@ -1,19 +1,12 @@
-.page {
-    padding: 30px;
-}
+.page { padding: 30px; }
 
-/* header row — title on the left, place order button on the right */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 }
-
-.page-header h2 {
-    color: #e94560;
-    margin: 0;
-}
+.page-header h2 { color: #e94560; margin: 0; }
 
 .btn-primary {
     padding: 10px 20px;
@@ -25,23 +18,15 @@
     font-weight: 600;
     cursor: pointer;
 }
+.btn-primary:hover { background-color: #c73652; }
 
-.btn-primary:hover {
-    background-color: #c73652;
-}
-
-/* form card */
 .form-card {
     background-color: #16213e;
     border-radius: 10px;
     padding: 24px;
     margin-bottom: 30px;
 }
-
-.form-card h3 {
-    color: #e94560;
-    margin: 0 0 20px 0;
-}
+.form-card h3 { color: #e94560; margin: 0 0 20px 0; }
 
 .form-error {
     color: #e94560;
@@ -58,15 +43,9 @@
     gap: 16px;
     margin-bottom: 14px;
 }
-
-.form-row label {
-    width: 140px;
-    flex-shrink: 0;
-    color: #a0a0b0;
-    font-size: 14px;
-}
-
-.form-row input {
+.form-row label { width: 160px; flex-shrink: 0; color: #a0a0b0; font-size: 14px; }
+.form-row input,
+.form-row select {
     flex: 1;
     padding: 10px 12px;
     background-color: #0f3460;
@@ -76,13 +55,12 @@
     font-size: 14px;
     outline: none;
 }
+.form-row input:focus,
+.form-row select:focus { border-color: #e94560; }
 
-.form-row input:focus {
-    border-color: #e94560;
-}
+.form-actions { display: flex; gap: 12px; margin-top: 8px; }
 
 .btn-submit {
-    margin-top: 8px;
     padding: 10px 24px;
     background-color: #e94560;
     color: #fff;
@@ -92,73 +70,81 @@
     font-weight: 600;
     cursor: pointer;
 }
+.btn-submit:hover { background-color: #c73652; }
 
-.btn-submit:hover {
-    background-color: #c73652;
+.btn-cancel {
+    padding: 10px 24px;
+    background-color: transparent;
+    color: #a0a0b0;
+    border: 1px solid #a0a0b0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
 }
+.btn-cancel:hover { border-color: #e0e0e0; color: #e0e0e0; }
 
-/* orders table */
-.orders-table {
+.data-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #0f3460;
     border-radius: 8px;
     overflow: hidden;
 }
-
-.orders-table thead {
-    background-color: #16213e;
-}
-
-.orders-table th {
+.data-table thead { background-color: #16213e; }
+.data-table th {
     padding: 12px 16px;
     text-align: left;
     color: #e94560;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
-.orders-table td {
+.data-table td {
     padding: 12px 16px;
     color: #e0e0e0;
     font-size: 14px;
     border-top: 1px solid #1a1a2e;
 }
+.data-table tbody tr:nth-child(even) { background-color: #122050; }
+.data-table tbody tr:hover { background-color: #1a3a6e; }
 
-.orders-table tbody tr:nth-child(even) {
-    background-color: #122050;
-}
+/* discount code shown in accent colour to stand out */
+.code-cell { color: #e94560; font-weight: 600; letter-spacing: 1px; }
 
-.orders-table tbody tr:hover {
-    background-color: #1a3a6e;
-}
-
-/* status badge */
-.status-badge {
+.badge-active {
     padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.status-pending    { background-color: #7a5c00; color: #ffd966; }
-.status-delivered  { background-color: #0a4a2a; color: #4caf50; }
-.status-cancelled  { background-color: #4a0a0a; color: #e94560; }
-.status-processing { background-color: #0a2a4a; color: #64b5f6; }
-
-/* inline status dropdown — styled to match the badge colors */
-.status-select {
-    padding: 4px 8px;
     border-radius: 10px;
     font-size: 12px;
     font-weight: 600;
+    background-color: #0a4a2a;
+    color: #4caf50;
     border: none;
     cursor: pointer;
-    outline: none;
 }
+.badge-inactive {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #4a0a0a;
+    color: #e94560;
+    border: none;
+    cursor: pointer;
+}
+
+.action-cell { display: flex; gap: 8px; }
+
+.btn-edit {
+    padding: 5px 12px;
+    background-color: #0a2a4a;
+    color: #64b5f6;
+    border: 1px solid #64b5f6;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.btn-edit:hover { background-color: #64b5f6; color: #0a2a4a; }
 
 .btn-delete {
     padding: 5px 12px;
@@ -169,8 +155,4 @@
     font-size: 12px;
     cursor: pointer;
 }
-
-.btn-delete:hover {
-    background-color: #e94560;
-    color: #fff;
-}
+.btn-delete:hover { background-color: #e94560; color: #fff; }

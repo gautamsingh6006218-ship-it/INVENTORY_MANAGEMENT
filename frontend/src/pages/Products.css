@@ -153,3 +153,61 @@
 .product-table tbody tr:hover {
     background-color: #1a3a6e;
 }
+
+/* action cell — Edit and Delete buttons sit side by side */
+.action-cell {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit {
+    padding: 5px 12px;
+    background-color: #0a2a4a;
+    color: #64b5f6;
+    border: 1px solid #64b5f6;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background-color: #64b5f6;
+    color: #0a2a4a;
+}
+
+.btn-delete {
+    padding: 5px 12px;
+    background-color: #4a0a0a;
+    color: #e94560;
+    border: 1px solid #e94560;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: #e94560;
+    color: #fff;
+}
+
+/* form-actions row — Save and Cancel sit side by side */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancel {
+    padding: 10px 24px;
+    background-color: transparent;
+    color: #a0a0b0;
+    border: 1px solid #a0a0b0;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    border-color: #e0e0e0;
+    color: #e0e0e0;
+}

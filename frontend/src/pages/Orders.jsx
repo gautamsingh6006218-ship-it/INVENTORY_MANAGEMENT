@@ -3,25 +3,18 @@ import { orderAPI } from '../api/axios';
 import './Orders.css';
 
 function Orders() {
-    // holds array of orders fetched from order-service
     const [orders, setOrders] = useState([]);
-
-    // controls whether the place order form is visible
     const [showForm, setShowForm] = useState(false);
-
-    // form fields — match the Order model fields
     const [customerId, setCustomerId] = useState('');
     const [productId, setProductId] = useState('');
     const [quantity, setQuantity] = useState('');
     const [totalPrice, setTotalPrice] = useState('');
     const [error, setError] = useState('');
 
-    // runs once on page load — fetches all orders
     useEffect(() => {
         fetchOrders();
     }, []);
 
-    // separate function so we can call it again after placing an order to refresh the table
     const fetchOrders = () => {
         orderAPI.get('/')
             .then(response => setOrders(response.data))
@@ -31,16 +24,13 @@ function Orders() {
     const handlePlaceOrder = async () => {
         setError('');
         try {
-            // POST to order-service — Kafka event is fired on backend after save
             await orderAPI.post('/', {
                 customer_id: customerId,
                 product_id: productId,
                 quantity,
                 total_price: totalPrice,
             });
-            // refresh the orders table so new order appears immediately
             fetchOrders();
-            // reset form
             setCustomerId(''); setProductId(''); setQuantity(''); setTotalPrice('');
             setShowForm(false);
         } catch (err) {
@@ -54,22 +44,41 @@ function Orders() {
         }
     };
 
+    // PATCH /orders/:id/status/ — only updates the status field, rest of order unchanged
+    const handleUpdateStatus = async (id, newStatus) => {
+        try {
+            await orderAPI.patch(`/${id}/status/`, { status: newStatus });
+            // update the local state directly so table reflects change without a full refetch
+            setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    // DELETE /orders/:id/ — removes order permanently from DB
+    const handleDelete = async (id) => {
+        try {
+            await orderAPI.delete(`/${id}/`);
+            // remove deleted order from local state so table updates immediately
+            setOrders(orders.filter(o => o.id !== id));
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
         <div className="page">
             <div className="page-header">
                 <h2>Orders</h2>
-                {/* toggle button — shows/hides the place order form */}
                 <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
                     {showForm ? 'Cancel' : '+ Place Order'}
                 </button>
             </div>
 
-            {/* place order form — only shown when showForm is true */}
             {showForm && (
                 <div className="form-card">
                     <h3>Place New Order</h3>
                     {error && <p className="form-error">{error}</p>}
-
                     <div className="form-row">
                         <label>Customer ID</label>
                         <input type="number" value={customerId} onChange={(e) => setCustomerId(e.target.value)} placeholder="Customer ID" />
@@ -86,12 +95,10 @@ function Orders() {
                         <label>Total Price</label>
                         <input type="number" value={totalPrice} onChange={(e) => setTotalPrice(e.target.value)} placeholder="0.00" />
                     </div>
-
                     <button className="btn-submit" onClick={handlePlaceOrder}>Place Order</button>
                 </div>
             )}
 
-            {/* orders table */}
             <table className="orders-table">
                 <thead>
                     <tr>
@@ -100,8 +107,10 @@ function Orders() {
                         <th>Product ID</th>
                         <th>Quantity</th>
                         <th>Total Price</th>
+                        {/* status column uses an inline dropdown — change fires PATCH immediately */}
                         <th>Status</th>
                         <th>Created At</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,14 +121,23 @@ function Orders() {
                             <td>{order.product_id}</td>
                             <td>{order.quantity}</td>
                             <td>${order.total_price}</td>
-                            {/* status badge — CSS class matches status value e.g. 'Pending', 'Delivered' */}
                             <td>
-                                <span className={`status-badge status-${order.status.toLowerCase()}`}>
-                                    {order.status}
-                                </span>
+                                {/* dropdown instead of a badge — selecting a new value calls PATCH */}
+                                <select
+                                    className={`status-select status-${order.status.toLowerCase()}`}
+                                    value={order.status}
+                                    onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Delivered">Delivered</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
                             </td>
-                            {/* slice(0, 10) extracts just the date part from ISO datetime string */}
                             <td>{order.created_at.slice(0, 10)}</td>
+                            <td>
+                                <button className="btn-delete" onClick={() => handleDelete(order.id)}>Delete</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
