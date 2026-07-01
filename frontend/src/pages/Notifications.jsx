@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { notificationAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Notifications.css';
 
 function Notifications() {
     const [notifications, setNotifications] = useState([]);
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     useEffect(() => {
         notificationAPI.get('/')
@@ -84,12 +86,19 @@ function Notifications() {
                                 Mark as Read
                             </button>
                         )}
-                        <button className="btn-delete" onClick={() => handleDelete(n.id)}>
+                        <button className="btn-delete" onClick={() => setPendingDeleteId(n.id)}>
                             Delete
                         </button>
                     </div>
                 </div>
             ))}
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Delete this notification? This cannot be undone."
+                onConfirm={() => { handleDelete(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
         </div>
     );
 }

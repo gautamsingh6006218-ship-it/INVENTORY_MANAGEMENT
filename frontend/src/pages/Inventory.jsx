@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { inventoryAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Inventory.css';
 
 function Inventory() {
@@ -20,6 +21,7 @@ function Inventory() {
     const [adjustQty, setAdjustQty] = useState('');
     const [adjustError, setAdjustError] = useState('');
     const [adjustErrors, setAdjustErrors] = useState({});
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     useEffect(() => { fetchStock(); }, []);
 
@@ -207,12 +209,19 @@ function Inventory() {
                                 <button className="btn-add-sm" onClick={() => openAdjust(item, 'add')}>+ Add</button>
                                 {/* Reduce calls PUT /:id/reduce-stock/ — fires stock.low if below reorder_level */}
                                 <button className="btn-reduce-sm" onClick={() => openAdjust(item, 'reduce')}>- Reduce</button>
-                                <button className="btn-delete" onClick={() => handleDelete(item.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDeleteId(item.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Delete this stock entry? This cannot be undone."
+                onConfirm={() => { handleDelete(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
         </div>
     );
 }

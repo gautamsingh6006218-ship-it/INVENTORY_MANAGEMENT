@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supplierAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Suppliers.css';
 
 function Suppliers() {
@@ -10,6 +11,7 @@ function Suppliers() {
     const [error, setError] = useState('');
     const [editError, setEditError] = useState('');
     const [errors, setErrors] = useState({});
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     // add form fields
     const [name, setName] = useState('');
@@ -226,12 +228,19 @@ function Suppliers() {
                             </td>
                             <td className="action-cell">
                                 <button className="btn-edit" onClick={() => handleEdit(s)}>Edit</button>
-                                <button className="btn-delete" onClick={() => handleDelete(s.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDeleteId(s.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Delete this supplier? This cannot be undone."
+                onConfirm={() => { handleDelete(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { discountAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Discounts.css';
 
 function Discounts() {
@@ -11,6 +12,7 @@ function Discounts() {
     const [editError, setEditError] = useState('');
     const [errors, setErrors] = useState({});
     const [editErrors, setEditErrors] = useState({});
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     // add form fields
     const [code, setCode] = useState('');
@@ -264,12 +266,19 @@ function Discounts() {
                             </td>
                             <td className="action-cell">
                                 <button className="btn-edit" onClick={() => handleEdit(d)}>Edit</button>
-                                <button className="btn-delete" onClick={() => handleDelete(d.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDeleteId(d.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Delete this discount? This cannot be undone."
+                onConfirm={() => { handleDelete(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
         </div>
     );
 }

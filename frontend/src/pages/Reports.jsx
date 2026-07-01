@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { reportAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Reports.css';
 
 function Reports() {
@@ -14,6 +15,7 @@ function Reports() {
     const [dataInput, setDataInput] = useState('');
     const [error, setError] = useState('');
     const [errors, setErrors] = useState({});
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     useEffect(() => {
         fetchReports();
@@ -191,13 +193,20 @@ function Reports() {
                                     >
                                         {viewingReport?.id === r.id ? 'Hide' : 'View'}
                                     </button>
-                                    <button className="btn-delete" onClick={() => handleDelete(r.id)}>Delete</button>
+                                    <button className="btn-delete" onClick={() => setPendingDeleteId(r.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             )}
+        {pendingDeleteId && (
+            <ConfirmModal
+                message="Delete this report? This cannot be undone."
+                onConfirm={() => { handleDelete(pendingDeleteId); setPendingDeleteId(null); }}
+                onCancel={() => setPendingDeleteId(null)}
+            />
+        )}
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productAPI } from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal';
 import './Products.css';
 
 function Products() {
@@ -29,6 +30,7 @@ function Products() {
     const [editType, setEditType] = useState('');
     const [editData, setEditData] = useState({});
     const [editError, setEditError] = useState('');
+    const [pendingDelete, setPendingDelete] = useState(null);
 
     useEffect(() => {
         fetchAllProducts();
@@ -287,7 +289,7 @@ function Products() {
                             <td>${product.price}</td>
                             <td className="action-cell">
                                 <button className="btn-edit" onClick={() => handleEdit('electronics', product)}>Edit</button>
-                                <button className="btn-delete" onClick={() => handleDelete('electronics', product.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDelete({ type: 'electronics', id: product.id })}>Delete</button>
                             </td>
                         </tr>
                     ))}
@@ -312,7 +314,7 @@ function Products() {
                             <td>${product.price}</td>
                             <td className="action-cell">
                                 <button className="btn-edit" onClick={() => handleEdit('food', product)}>Edit</button>
-                                <button className="btn-delete" onClick={() => handleDelete('food', product.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDelete({ type: 'food', id: product.id })}>Delete</button>
                             </td>
                         </tr>
                     ))}
@@ -337,12 +339,19 @@ function Products() {
                             <td>${product.price}</td>
                             <td className="action-cell">
                                 <button className="btn-edit" onClick={() => handleEdit('clothing', product)}>Edit</button>
-                                <button className="btn-delete" onClick={() => handleDelete('clothing', product.id)}>Delete</button>
+                                <button className="btn-delete" onClick={() => setPendingDelete({ type: 'clothing', id: product.id })}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+        {pendingDelete && (
+            <ConfirmModal
+                message={`Delete this ${pendingDelete.type} product? This cannot be undone.`}
+                onConfirm={() => { handleDelete(pendingDelete.type, pendingDelete.id); setPendingDelete(null); }}
+                onCancel={() => setPendingDelete(null)}
+            />
+        )}
         </div>
     );
 }
