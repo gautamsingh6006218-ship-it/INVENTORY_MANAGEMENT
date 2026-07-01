@@ -2,11 +2,102 @@
     padding: 30px;
 }
 
-.page h2 {
-    color: #e94560;
-    margin-bottom: 20px;
+/* header row — title on the left, place order button on the right */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
 }
 
+.page-header h2 {
+    color: #e94560;
+    margin: 0;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background-color: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #c73652;
+}
+
+/* form card */
+.form-card {
+    background-color: #16213e;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.form-card h3 {
+    color: #e94560;
+    margin: 0 0 20px 0;
+}
+
+.form-error {
+    color: #e94560;
+    font-size: 13px;
+    background-color: #1f000a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.form-row label {
+    width: 140px;
+    flex-shrink: 0;
+    color: #a0a0b0;
+    font-size: 14px;
+}
+
+.form-row input {
+    flex: 1;
+    padding: 10px 12px;
+    background-color: #0f3460;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-row input:focus {
+    border-color: #e94560;
+}
+
+.btn-submit {
+    margin-top: 8px;
+    padding: 10px 24px;
+    background-color: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #c73652;
+}
+
+/* orders table */
 .orders-table {
     width: 100%;
     border-collapse: collapse;
@@ -44,7 +135,7 @@
     background-color: #1a3a6e;
 }
 
-/* status badge — pill shape with color based on order status */
+/* status badge */
 .status-badge {
     padding: 4px 10px;
     border-radius: 12px;
@@ -53,22 +144,7 @@
     text-transform: uppercase;
 }
 
-.status-pending {
-    background-color: #7a5c00;
-    color: #ffd966;
-}
-
-.status-delivered {
-    background-color: #0a4a2a;
-    color: #4caf50;
-}
-
-.status-cancelled {
-    background-color: #4a0a0a;
-    color: #e94560;
-}
-
-.status-processing {
-    background-color: #0a2a4a;
-    color: #64b5f6;
-}
+.status-pending    { background-color: #7a5c00; color: #ffd966; }
+.status-delivered  { background-color: #0a4a2a; color: #4caf50; }
+.status-cancelled  { background-color: #4a0a0a; color: #e94560; }
+.status-processing { background-color: #0a2a4a; color: #64b5f6; }
