@@ -1,5 +1,12 @@
 services:
 
+  # ── Redis (shared cache for all services) ──────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
   # ── PostgreSQL ─────────────────────────────────────────────────────────────
   postgres:
     image: postgres:15
@@ -39,6 +46,7 @@ services:
       - "8003:8003"
     depends_on:
       - postgres
+      - redis
     environment:
       DB_NAME: user_service_db
       DB_USER: ${POSTGRES_USER}
@@ -47,6 +55,7 @@ services:
       DB_PORT: 5432
       SECRET_KEY: ${USER_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Product Service (port 8000) ─────────────────────────────────────────────
@@ -56,6 +65,7 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+      - redis
     environment:
       DB_NAME: product_service_db
       DB_USER: ${POSTGRES_USER}
@@ -64,6 +74,7 @@ services:
       DB_PORT: 5432
       SECRET_KEY: ${PRODUCT_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Inventory Service (port 8001) ───────────────────────────────────────────
@@ -74,6 +85,7 @@ services:
     depends_on:
       - postgres
       - kafka
+      - redis
     environment:
       DB_NAME: inventory_service_db
       DB_USER: ${POSTGRES_USER}
@@ -83,6 +95,7 @@ services:
       SECRET_KEY: ${INVENTORY_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Order Service (port 8002) ────────────────────────────────────────────────
@@ -93,6 +106,7 @@ services:
     depends_on:
       - postgres
       - kafka
+      - redis
     environment:
       DB_NAME: order_service_db
       DB_USER: ${POSTGRES_USER}
@@ -102,6 +116,7 @@ services:
       SECRET_KEY: ${ORDER_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Supplier Service (port 8004) ─────────────────────────────────────────────
@@ -111,6 +126,7 @@ services:
       - "8004:8004"
     depends_on:
       - postgres
+      - redis
     environment:
       DB_NAME: supplier_service_db
       DB_USER: ${POSTGRES_USER}
@@ -119,6 +135,7 @@ services:
       DB_PORT: 5432
       SECRET_KEY: ${SUPPLIER_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Discount Service (port 8005) ─────────────────────────────────────────────
@@ -128,6 +145,7 @@ services:
       - "8005:8005"
     depends_on:
       - postgres
+      - redis
     environment:
       DB_NAME: discount_service_db
       DB_USER: ${POSTGRES_USER}
@@ -137,6 +155,7 @@ services:
       # discount-service uses DJANGO_SECRET_KEY not SECRET_KEY
       DJANGO_SECRET_KEY: ${DISCOUNT_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Report Service (port 8006) ───────────────────────────────────────────────
@@ -146,6 +165,7 @@ services:
       - "8006:8006"
     depends_on:
       - postgres
+      - redis
     environment:
       DB_NAME: report_service_db
       DB_USER: ${POSTGRES_USER}
@@ -154,6 +174,7 @@ services:
       DB_PORT: 5432
       SECRET_KEY: ${REPORT_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Notification Service (port 8007) ─────────────────────────────────────────
@@ -164,6 +185,7 @@ services:
     depends_on:
       - postgres
       - kafka
+      - redis
     environment:
       DB_NAME: notification_service_db
       DB_USER: ${POSTGRES_USER}
@@ -173,16 +195,17 @@ services:
       SECRET_KEY: ${NOTIFICATION_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── Notification Consumer (Kafka listener — no HTTP port) ────────────────────
   notification-consumer:
     build: ./backend/notification-service
-    # overrides the Dockerfile CMD — runs consumer script instead of runserver
     command: python notifications/consumer.py
     depends_on:
       - postgres
       - kafka
+      - redis
     environment:
       DB_NAME: notification_service_db
       DB_USER: ${POSTGRES_USER}
@@ -192,6 +215,7 @@ services:
       SECRET_KEY: ${NOTIFICATION_SECRET_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       KAFKA_BROKER: kafka:9092
+      REDIS_URL: redis://redis:6379/1
     restart: on-failure
 
   # ── API Gateway (port 8008) ───────────────────────────────────────────────────

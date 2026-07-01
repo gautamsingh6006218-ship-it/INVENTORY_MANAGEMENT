@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,17 +13,19 @@ from products.serializers import CategorySerializer, ElectronicsSerializer, Food
 
 def category_list(request):
     if request.method == 'GET':
-        # fetch all categories from DB
+        cached = cache.get('products:categories')
+        if cached:
+            return Response(cached, status=status.HTTP_200_OK)
         categories = Category.objects.all()
-        # many=True tells serializer multiple objects are being converted to JSON
         serializer = CategorySerializer(categories, many=True)
+        cache.set('products:categories', serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
-        # pass incoming JSON data to serializer for validation
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()  # saves new category to DB
+            serializer.save()
+            cache.delete('products:categories')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -32,20 +35,22 @@ def category_list(request):
 
 def electronics_list(request):
     if request.method == 'GET':
-        # fetch all electronics products from DB
+        cached = cache.get('products:electronics')
+        if cached:
+            return Response(cached, status=status.HTTP_200_OK)
         products = ElectronicsProduct.objects.all()
         serializer = ElectronicsSerializer(products, many=True)
+        cache.set('products:electronics', serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
         serializer = ElectronicsSerializer(data=request.data)
         if serializer.is_valid():
-            product = serializer.save()  # returns ElectronicsProduct Python object
+            product = serializer.save()
+            cache.delete('products:electronics')
             return Response({
                 'message': 'Electronics Product created successfully',
-                # get_product_type() — Polymorphism, returns "Electronics" from ElectronicsProduct class 
                 'product_type': product.get_product_type(),
-                # get_discounted_price() calls get_discount() internally — function calling function
                 'discounted_price': str(product.get_discounted_price()),
                 'data': serializer.data,
             }, status=status.HTTP_201_CREATED)
@@ -56,20 +61,22 @@ def electronics_list(request):
 
 def food_list(request):
     if request.method == 'GET':
-        # fetch all food products from DB
+        cached = cache.get('products:food')
+        if cached:
+            return Response(cached, status=status.HTTP_200_OK)
         products = FoodProduct.objects.all()
         serializer = FoodSerializer(products, many=True)
+        cache.set('products:food', serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
         serializer = FoodSerializer(data=request.data)
         if serializer.is_valid():
-            product = serializer.save()  # returns FoodProduct Python object
+            product = serializer.save()
+            cache.delete('products:food')
             return Response({
                 'message': 'Food Product created successfully',
-                # get_product_type() — Polymorphism, returns "Food" from FoodProduct class
                 'product_type': product.get_product_type(),
-                # get_discounted_price() calls get_discount() internally — function calling function
                 'discounted_price': str(product.get_discounted_price()),
                 'data': serializer.data,
             }, status=status.HTTP_201_CREATED)
@@ -81,20 +88,22 @@ def food_list(request):
 
 def clothing_list(request):
     if request.method == 'GET':
-        # fetch all clothing products from DB
+        cached = cache.get('products:clothing')
+        if cached:
+            return Response(cached, status=status.HTTP_200_OK)
         products = ClothingProduct.objects.all()
         serializer = ClothingSerializer(products, many=True)
+        cache.set('products:clothing', serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
         serializer = ClothingSerializer(data=request.data)
         if serializer.is_valid():
-            product = serializer.save()  # returns ClothingProduct Python object
+            product = serializer.save()
+            cache.delete('products:clothing')
             return Response({
                 'message': 'Clothing Product created successfully',
-                # get_product_type() — Polymorphism, returns "Clothing" from ClothingProduct class
                 'product_type': product.get_product_type(),
-                # get_discounted_price() calls get_discount() internally — function calling function
                 'discounted_price': str(product.get_discounted_price()),
                 'data': serializer.data,
             }, status=status.HTTP_201_CREATED)
@@ -117,15 +126,16 @@ def category_detail(request, pk):
         return Response(serializer.data)
 
     if request.method == 'PUT':
-        # pass existing object + new data — serializer knows this is an UPDATE not a CREATE
         serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
-            serializer.save()  # updates the existing DB row
+            serializer.save()
+            cache.delete('products:categories')
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        category.delete()  # removes the row from DB
+        category.delete()
+        cache.delete('products:categories')
         return Response({'message': 'Category deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -145,15 +155,16 @@ def electronics_detail(request, pk):
         return Response(serializer.data)
 
     if request.method == 'PUT':
-        # passing both the existing product object and new request data triggers an update
         serializer = ElectronicsSerializer(product, data=request.data)
         if serializer.is_valid():
-            serializer.save()  # updates the existing DB row
+            serializer.save()
+            cache.delete('products:electronics')
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
         product.delete()
+        cache.delete('products:electronics')
         return Response({'message': 'Electronics Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -174,15 +185,16 @@ def food_detail(request, pk):
         return Response(serializer.data)
 
     if request.method == 'PUT':
-        # pass existing object + new data — serializer knows this is an UPDATE not a CREATE
         serializer = FoodSerializer(product, data=request.data)
         if serializer.is_valid():
-            serializer.save()  # updates the existing DB row
+            serializer.save()
+            cache.delete('products:food')
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        product.delete()  # removes the row from DB
+        product.delete()
+        cache.delete('products:food')
         return Response({'message': 'Food Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -203,14 +215,15 @@ def clothing_detail(request, pk):
         return Response(serializer.data)
 
     if request.method == 'PUT':
-        # pass existing object + new data — serializer knows this is an UPDATE not a CREATE
         serializer = ClothingSerializer(product, data=request.data)
         if serializer.is_valid():
-            serializer.save()  # updates the existing DB row
+            serializer.save()
+            cache.delete('products:clothing')
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'DELETE':
-        product.delete()  # removes the row from DB
+        product.delete()
+        cache.delete('products:clothing')
         return Response({'message': 'Clothing Product deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
     
